@@ -1,12 +1,16 @@
 import math
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.common.exceptions import NoAlertPresentException
+from .locators import BasePageLocators
+
 
 class BasePage():
     """
     Базовая страница, от которой будут унаследованы все остальные классы.
     """
-    def __init__(self, browser, url, timeout=10):
+    def __init__(self, browser, url, timeout=5):
         self.browser = browser
         self.url = url
         self.browser.implicitly_wait(timeout)
@@ -20,6 +24,41 @@ class BasePage():
         except NoSuchElementException:
             return False
         return True
+
+    def is_not_element_present(self, locator, data, timeout=4):
+        """
+        Проверяем, что элемент не появился на странице в течении заданного времени.
+        """
+        try:
+            WebDriverWait(self.browser, timeout).until(
+                EC.presence_of_element_located((locator, data))
+            )
+        except TimeoutException:
+            return True
+        return False
+
+    def is_disappeared(self, locator, data, timeout=4):
+        """
+        Проверяем, что элемент исчезает со страницы за заданное время.
+        """
+        try:
+            WebDriverWait(self.browser, timeout, 1, TimeoutException).until_not(
+                EC.presence_of_element_located((locator, data))
+            )
+        except TimeoutException:
+            return False
+        return True
+
+    def should_be_login_link(self):
+        assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented."
+
+    def go_to_login_page(self):
+        try:
+            login_link = self.browser.find_element(*BasePageLocators.LOGIN_LINK)
+        except NoSuchElementException:
+            assert False, "Login link not found in this page."
+        else:
+            login_link.click()
 
     def solve_quiz_and_get_code(self):
         alert = self.browser.switch_to.alert

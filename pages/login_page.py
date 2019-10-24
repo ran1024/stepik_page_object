@@ -1,4 +1,3 @@
-#from selenium.webdriver.remote.webdriver import WebDriver as driver
 from .base_page import BasePage
 from .locators import LoginPageLocators
 

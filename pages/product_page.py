@@ -1,7 +1,6 @@
-#from selenium.webdriver.remote.webdriver import WebDriver as driver
 from .base_page import BasePage
 from .locators import ProductPageLocators
-import time
+#import time
 
 
 class ProductPage(BasePage):
@@ -30,7 +29,7 @@ class ProductPage(BasePage):
         promo = self.browser.current_url.find("?promo=newYear")
         button = self.browser.find_element(*ProductPageLocators.ADD_TO_BASKET_BUTTON)
         button.click()
-        if promo:
+        if promo > -1:
             self.solve_quiz_and_get_code()
 
     def should_be_message_about_added_to_basket(self, product_name):
@@ -42,3 +41,11 @@ class ProductPage(BasePage):
         cost_msg = self.browser.find_element(*ProductPageLocators.COST_MESSAGE).text
         assert cost_msg == product_cost, \
                                 "The value of the basket is not equal to the price of the item."
+
+    def should_not_be_success_message(self):
+        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), \
+                                "Success message is present, but should not be."
+
+    def should_be_disappear_success_message(self):
+        assert self.is_disappeared(*ProductPageLocators.SUCCESS_MESSAGE), \
+                                "Success message is not disappear after any time."
