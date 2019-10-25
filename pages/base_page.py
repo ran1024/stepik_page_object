@@ -60,6 +60,14 @@ class BasePage():
         else:
             login_link.click()
 
+    def go_to_basket_page(self):
+        try:
+            basket_link = self.browser.find_element(*BasePageLocators.BASKET_LINK)
+        except NoSuchElementException:
+            assert False, "Basket link not found in this page."
+        else:
+            basket_link.click()
+
     def solve_quiz_and_get_code(self):
         alert = self.browser.switch_to.alert
         x = alert.text.split(" ")[2]
