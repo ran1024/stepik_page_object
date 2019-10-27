@@ -1,6 +1,5 @@
 from .base_page import BasePage
 from .locators import ProductPageLocators
-#import time
 
 
 class ProductPage(BasePage):
@@ -26,10 +25,11 @@ class ProductPage(BasePage):
                                 "There is no button to add to the basket."
 
     def add_product_to_basket(self):
-        promo = self.browser.current_url.find("?promo=newYear")
+        promo1 = self.browser.current_url.find("?promo=offer")
+        promo2 = self.browser.current_url.find("?promo=newYear")
         button = self.browser.find_element(*ProductPageLocators.ADD_TO_BASKET_BUTTON)
         button.click()
-        if promo > -1:
+        if promo1 > -1 or promo2 > -1:
             self.solve_quiz_and_get_code()
 
     def should_be_message_about_added_to_basket(self, product_name):
